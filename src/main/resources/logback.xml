@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="20 seconds" debug="true">
+	<contextName>mr.worldCrm</contextName>
+
+	<!--定义日志文件的变量 -->
+	<property name="LOG_HOME" value="/home/logs/crm/" />
+	<property name="APP_NAME" value="m-crm" />
+	<property name="LOG_REG" value="%d{MM-dd HH:mm:ss.SSS} [%t] %-5p %logger - %m%n" />
+
+	<!-- console log -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>${LOG_REG}</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 文件 -->
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${LOG_HOME}/%d{yyyyMMdd}.${APP_NAME}-detail.log
+			</FileNamePattern>
+			<MaxHistory>21</MaxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>${LOG_REG}</pattern>
+		</encoder>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>1024MB</MaxFileSize>
+		</triggeringPolicy>
+	</appender>
+
+	<!--文件-错误日志 -->
+	<appender name="FILE_error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${LOG_HOME}/%d{yyyyMMdd}.${APP_NAME}-error.log</FileNamePattern>
+			<MaxHistory>21</MaxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>${LOG_REG}</pattern>
+		</encoder>
+		<!-- 只打印错误日志 -->
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+
+	<logger name="org.apache.http" level="info"/>
+
+	<!-- 日志输出级别 -->
+	<root level="${mr.log.level}">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FILE" />
+		<appender-ref ref="FILE_error" />
+	</root>
+
+</configuration>
